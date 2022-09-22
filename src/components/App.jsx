@@ -5,7 +5,7 @@ import Modal from './Modal/Modal';
 import ButtonLoadMore from './Button/Button';
 import Spinner from 'components/Loader/Loader';
 import { AppBox } from './App.styled';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export const App = () => {
   const [query, setQuery] = useState('');
@@ -56,9 +56,14 @@ export const App = () => {
   //   top: window.innerHeight - 76,
   //   behavior: 'smooth',
   // });
-
+  // const isFirstRender = useRef(true);
   useEffect(() => {
-    if(query === "") return
+    // if(isFirstRender.current) {
+    //   console.log(isFirstRender.current)
+    //   isFirstRender.current = false; 
+    //   return
+    // }
+    // if(query === "") return
     FetchAPI(page, query)
       .then(images => {
         setImages(prevImages => [...prevImages, ...images.hits]);
