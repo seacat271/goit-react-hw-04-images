@@ -1,9 +1,9 @@
-import { Component } from 'react';
+
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import { ReactComponent as CircleRight } from '../../icon/CircleRight.svg';
 import { ReactComponent as CircleLeft } from '../../icon/CircleLeft.svg';
-
+import { useState, useEffect, useCallback } from 'react';
 import {
   ModalTab,
   Overlay,
@@ -12,55 +12,47 @@ import {
   RightIconButton,
   LeftIconButton,
 } from './Modal.styled';
+
 const ModalRoot = document.querySelector('#modal-root');
 
-class Modal extends Component {
-  state = {
-    showImage: this.props.image,
-    isLoading: false,
-  };
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
-  }
+const Modal = ({image, onClose, imagesList}) => {
+const [showImage, setShowImage] = useState(image);
+const {largeImageURL, tags} = showImage;
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
-  }
+const handleKeyDown = event => {
+  if (event.code === 'Escape') onClose();
+};
 
-  handleKeyDown = event => {
-    if (event.code === 'Escape') {
-      this.props.onClose();
-    }
-  };
+useEffect(() => {
 
-  handleBackDropClick = event => {
-    if (event.currentTarget === event.target) {
-      this.props.onClose();
-    }
-  };
 
-  onClickImage = step => {
-    const { imagesList, onClose } = this.props;
-    const IndexImage = imagesList
-      .map(item => item.id)
-      .indexOf(this.state.showImage.id);
-    if (IndexImage + step < 0 || IndexImage + step > imagesList.length - 1)
-      onClose();
-    this.setState({ showImage: imagesList[IndexImage + step] });
-  };
+  window.addEventListener('keydown', handleKeyDown);
 
-  loadingImage = () => {
-    this.setState({ isLoading: true });
-  };
+  return window.removeEventListener('keydown', handleKeyDown);
+}, [handleKeyDown])
 
-  render() {
-    const {
-      showImage: { largeImageURL, tags },
-    } = this.state;
+const handleBackDropClick = event => {
+  if (event.currentTarget === event.target) onClose();
+};
+
+const onClickImage = step => {
+  const IndexImage = imagesList
+    .map(item => item.id)
+    .indexOf(showImage.id);
+  if (IndexImage + step < 0 || IndexImage + step > imagesList.length - 1)
+    onClose();
+  setShowImage(imagesList[IndexImage + step]);
+};
+
+
+
+
+
+
     return createPortal(
-      <Overlay onClick={this.handleBackDropClick}>
-        <ModalTab style={{ display: !this.state.isLoading ? "none" : "block" }}>
-          <img src={largeImageURL} alt={tags} onLoad={this.loadingImage}/>
+      <Overlay onClick={handleBackDropClick}>
+        <ModalTab>
+          <img src={largeImageURL} alt={tags}/>
 
           <TagsBox>
             <TagsText>{tags}</TagsText>
@@ -68,7 +60,7 @@ class Modal extends Component {
           <RightIconButton
             type="button"
             onClick={() => {
-              this.onClickImage(1);
+              onClickImage(1);
             }}
           >
             <CircleRight width="48" height="48" fill="lightgrey" />
@@ -76,7 +68,7 @@ class Modal extends Component {
           <LeftIconButton
             type="button"
             onClick={() => {
-              this.onClickImage(-1);
+              onClickImage(-1);
             }}
           >
             <CircleLeft width="48" height="48" fill="lightgrey" />
@@ -84,9 +76,9 @@ class Modal extends Component {
         </ModalTab>
       </Overlay>,
       ModalRoot
-    );
-  }
+    )
 }
+
 
 export default Modal;
 
