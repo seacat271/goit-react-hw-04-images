@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import { ReactComponent as CircleRight } from '../../icon/CircleRight.svg';
 import { ReactComponent as CircleLeft } from '../../icon/CircleLeft.svg';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect} from 'react';
 import {
   ModalTab,
   Overlay,
@@ -20,16 +20,18 @@ const [showImage, setShowImage] = useState(image);
 const {largeImageURL, tags} = showImage;
 
 const handleKeyDown = event => {
+  console.log(event)
   if (event.code === 'Escape') onClose();
 };
 
+
+
 useEffect(() => {
-
-
   window.addEventListener('keydown', handleKeyDown);
 
-  return window.removeEventListener('keydown', handleKeyDown);
-}, [handleKeyDown])
+  return () => window.removeEventListener('keydown', handleKeyDown);
+  // eslint-disable-next-line
+},[])
 
 const handleBackDropClick = event => {
   if (event.currentTarget === event.target) onClose();
