@@ -12,6 +12,7 @@ import {
   RightIconButton,
   LeftIconButton,
 } from './Modal.styled';
+import { useCallback } from 'react';
 
 const ModalRoot = document.querySelector('#modal-root');
 
@@ -19,19 +20,18 @@ const Modal = ({image, onClose, imagesList}) => {
 const [showImage, setShowImage] = useState(image);
 const {largeImageURL, tags} = showImage;
 
-const handleKeyDown = event => {
-  console.log(event)
+const handleKeyDown = useCallback(event => {
+
   if (event.code === 'Escape') onClose();
-};
-
-
+}, [onClose])
 
 useEffect(() => {
+
   window.addEventListener('keydown', handleKeyDown);
 
   return () => window.removeEventListener('keydown', handleKeyDown);
-  // eslint-disable-next-line
-},[])
+
+},[handleKeyDown])
 
 const handleBackDropClick = event => {
   if (event.currentTarget === event.target) onClose();
